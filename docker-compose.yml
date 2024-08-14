@@ -4,8 +4,8 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: cesarele23
-      POSTGRES_PASSWORD: smpapi3120e3j
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: spmdb
     ports:
       - 5499:5432 

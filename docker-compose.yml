@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: cesarele23
+      POSTGRES_PASSWORD: smpapi3120e3j
+      POSTGRES_DB: spmdb
+    ports:
+      - 5499:5432 

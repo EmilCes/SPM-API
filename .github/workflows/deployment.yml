@@ -20,7 +20,7 @@ jobs:
             docker compose up -d
       - name: Run Build
         run: |
-            docker compose exec -T spm-api yarn build
+            docker compose exec -T spm-api npm run build
 
   deploy:
     needs: build

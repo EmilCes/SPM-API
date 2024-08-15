@@ -8,17 +8,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build docker_compose
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
       - name: Build application
-        run: docker-compose exec -T spm-api yarn build
+        run: docker compose exec -T spm-api yarn build
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Deploy application
         env:
           PRIVATE_KEY: ${{ secrets.CERTIFICATE }}

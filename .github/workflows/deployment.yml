@@ -12,10 +12,15 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
-      - name: Build docker_compose
-        run: docker compose up -d --build
-      - name: Build application
-        run: docker compose exec -T spm-api yarn build
+      - name: Set up Docker Build
+        run: |
+            docker compose build
+      - name: Start Services
+        run: |
+            docker compose up -d
+      - name: Run Build
+        run: |
+            docker compose exec -T spm-api yarn build
 
   deploy:
     needs: build

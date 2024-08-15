@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Build docker_compose
         run: docker-compose up -d --build
       - name: Build application
@@ -18,7 +18,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Deploy application
         env:
           PRIVATE_KEY: ${{ secrets.CERTIFICATE }}

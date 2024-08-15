@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: spmdb
     ports:
-      - 5499:5432 
+      - 5432:5432 
     volumes:
       - db_data:/var/lib/postgresql/data
   

@@ -26,6 +26,7 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 RUN npx prisma generate
+RUN npm run build
 
 # Etapa de ejecución
 FROM node:22-alpine

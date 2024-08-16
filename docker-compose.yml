@@ -1,3 +1,4 @@
+version: '3'
 services:
   db:
     image: postgres
@@ -10,7 +11,9 @@ services:
       - 5499:5432 
     volumes:
       - db_data:/var/lib/postgresql/data
-  
+    networks:
+      - dockernet
+
   spm-api:
     build: 
       context: .
@@ -20,6 +23,12 @@ services:
       - 3000:3000
     depends_on:
       - db
+    networks:
+      - dockernet
 
 volumes:
   db_data:
+
+networks:
+  dockernet:
+    external: true

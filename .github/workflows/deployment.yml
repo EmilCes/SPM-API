@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -17,10 +17,10 @@ jobs:
             docker compose build
       - name: Run Build
         run: |
-            docker compose run --rm spm-api npm run build
-      - name: Start Services
-        run: |
             docker compose up -d
+      - name: Run Build
+        run: |
+            docker compose exec -T spm-api npm run build
 
   deploy:
     needs: build

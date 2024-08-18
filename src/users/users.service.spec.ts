@@ -5,29 +5,27 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
+import { CoreService } from 'src/core/core.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('UsersService', () => {
   let userService: UsersService;
   let prismaMock: DeepMockProxy<PrismaClient>
-  //let authServiceMock: Partial<AuthService>
 
   beforeEach(async () => {
 
     prismaMock = mockDeep<PrismaClient>();
-    //authServiceMock = mockDeep<AuthService>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
         AuthService,
+        CoreService,
+        JwtService,
         {
           provide: PrismaService,
           useValue: prismaMock
         },
-        // {
-        //   provide: AuthService,
-        //   useValue: authServiceMock,
-        // }
       ],
     }).compile();
 
@@ -47,10 +45,12 @@ describe('UsersService', () => {
         updatedAt: new Date(),
       };
 
+      const { createdAt, updatedAt, password, ...expectedUser } = existingUser;
+
       prismaMock.user.findUnique.mockResolvedValue(existingUser);
 
       const result = await userService.findOne("clztakb2v0000wv81gj9wmqro");
-      expect(result).toEqual(existingUser);
+      expect(result).toEqual(expectedUser);
       expect(prismaMock.user.findUnique).toHaveBeenCalledTimes(1);
       expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
         where: { userId: existingUser.userId },
@@ -95,12 +95,25 @@ describe('UsersService', () => {
         },
       ];
 
+      const expectedUsers = allUsers.map(user => ({
+        userId: user.userId,
+        username: user.username
+      }));
+
       prismaMock.user.findMany.mockResolvedValue(allUsers);
 
-      const result = await userService.findAll();
-      expect(result).toEqual(allUsers);
+      const response = await userService.findAll();
+
+      const result = response.map(user => ({
+        userId: user.userId,
+        username: user.username
+      }))
+
+      expect(result).toEqual(expectedUsers);
       expect(prismaMock.user.findMany).toHaveBeenCalledTimes(1);
-      expect(prismaMock.user.findMany).toHaveBeenCalledWith();
+      expect(prismaMock.user.findMany).toHaveBeenCalledWith({
+        select: { userId: true, username: true }
+      });
     });
 
     it('should return empty array if there are no users', async () => {
@@ -109,7 +122,9 @@ describe('UsersService', () => {
       const result = await userService.findAll();
       expect(result).toEqual([]);
       expect(prismaMock.user.findMany).toHaveBeenCalledTimes(1);
-      expect(prismaMock.user.findMany).toHaveBeenCalledWith();
+      expect(prismaMock.user.findMany).toHaveBeenCalledWith({
+        select: { userId: true, username: true }
+      });
     });
   });
 

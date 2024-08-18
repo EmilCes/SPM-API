@@ -1,7 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthService } from 'src/auth/auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CoreService } from 'src/core/core.service';
 
@@ -26,11 +25,26 @@ export class UsersService {
       password: hashedPassword
     }});
 
-    return newUser;
+    const {password, ...result} = newUser;
+
+    return result;
   }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      select: {
+        userId: true,
+        username: true
+      }
+    });
+    /*const users = this.prisma.user.findMany();
+
+    const result = (await users).map((user) => ({
+      userId: user.userId,
+      username: user.username
+    }));
+
+    return result;*/
   }
 
   async findOne(id: string) {
@@ -39,7 +53,9 @@ export class UsersService {
     if(!userFound)
       throw new NotFoundException(`User with id $(id) not found`);
 
-    return userFound;
+    const {password, createdAt, updatedAt, ...result} = userFound;
+
+    return result;
 
   }
 
@@ -68,9 +84,11 @@ export class UsersService {
         ...updateUserDto,
         password: hashedPassword
       }
-    })
+    });
 
-    return updatedUser;
+    const {password, ...result} = updatedUser;
+
+    return result;
   }
 
   async remove(id: string) {
